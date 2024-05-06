@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+    <user uid="0000000001" password="123456789"/>
+    <user uid="0000000002" password="987654321"/>
+    <user uid="0000000003" password="aiueo1234"/>
+</dataset>
