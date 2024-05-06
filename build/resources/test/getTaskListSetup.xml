@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+    <task sequence_no="1234" uid="0000000001" task_name="todo1" status_cd="0"/>
+    <task sequence_no="5678" uid="0000000001" task_name="todo2" status_cd="1"/>
+    <task sequence_no="9876" uid="0000000001" task_name="todo3" status_cd="2"/>
+</dataset>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="springchatapp.demo.service.TaskServiceTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2024-05-06T04:32:03" hostname="enuShonoMacBook-Air.local" time="0.045">
+  <properties/>
+  <testcase name="タスクの登録ができる" classname="springchatapp.demo.service.TaskServiceTest" time="0.039"/>
+  <testcase name="タスクが取得できない場合は空のOptionalで返す" classname="springchatapp.demo.service.TaskServiceTest" time="0.002"/>
+  <testcase name="Uidに紐づいたタスク一覧のEntityが取得できる" classname="springchatapp.demo.service.TaskServiceTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
