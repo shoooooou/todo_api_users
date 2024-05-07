@@ -1,2 +1,3 @@
-_20:29:46.466 [Test worker] INFO springchatapp.demo.service.UserService -- rowPassword:test1234
-_20:29:46.469 [Test worker] INFO springchatapp.demo.service.UserService -- encodedPassword:null
+€01:45:34.822 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+v01:45:34.825 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+01:45:34.827 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 2 ms

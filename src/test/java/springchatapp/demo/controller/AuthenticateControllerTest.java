@@ -1,60 +1,57 @@
-//package springchatapp.demo.controller;
-//
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.ArgumentMatchers.eq;
-//import static org.mockito.Mockito.times;
-//import static org.mockito.Mockito.verify;
-//import static org.mockito.Mockito.when;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Optional;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-//import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-//import springchatapp.demo.model.entity.AddTaskEntityFactory;
-//import springchatapp.demo.model.entity.TaskEntity;
-//import springchatapp.demo.model.resource.AddTaskRequestResource;
-//import springchatapp.demo.model.value.object.StatusCd;
-//import springchatapp.demo.model.value.object.TaskName;
-//import springchatapp.demo.service.UserService;
-//
-//@ExtendWith(MockitoExtension.class)
-//class TaskControllerTest {
-//  @Mock
-//  UserService taskService;
-//  private MockMvc mockMvc;
-//  @InjectMocks
-//  private TaskController target;
-//
-//  @BeforeEach
-//  void setUp() {
-//    mockMvc = MockMvcBuilders.standaloneSetup(target).build();
-//  }
-//
-//  @DisplayName("タスク取得件数が0件の場合にレスポンスのステータスが200番台でデータに空のリストが含まれている")
-//  @Test
-//  void getTaskList_ok1() throws Exception {
-//    final String uid = "0000000001";
-//    when(taskService.getTaskList(uid)).thenReturn(Optional.empty());
-//
-//    mockMvc.perform(MockMvcRequestBuilders.get("/todo/tasklist/" + uid))
-//        .andExpect(status().isOk())
-//        .andExpect(jsonPath("$").isArray())
-//        .andExpect(jsonPath("$").isEmpty());
-//
-//    verify(taskService, times(1)).getTaskList(uid);
-//  }
-//
+package springchatapp.demo.controller;
+
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import springchatapp.demo.model.entity.UserEntityFactory;
+import springchatapp.demo.model.resource.UserResource;
+import springchatapp.demo.service.UserService;
+
+@ExtendWith(MockitoExtension.class)
+class TaskControllerTest {
+  @Mock
+  UserService UserService;
+  private MockMvc mockMvc;
+  @InjectMocks
+  private AuthenticateController target;
+
+  @BeforeEach
+  void setUp() {
+    mockMvc = MockMvcBuilders.standaloneSetup(target).build();
+  }
+
+  @DisplayName("ログイン認証が成功したらtrueが返却される")
+  @Test
+  void loginAuthenticate_ok1() throws Exception {
+    final var uid = "0000000001";
+    final var password = "test1234";
+
+    var userEntity =
+        UserEntityFactory.create(UserResource.builder().uid(uid).password(password).build());
+
+    when(UserService.authenticateUser(any())).thenReturn(true);
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/todo/authenticate/login")
+            .contentType("application/json")
+            .content("{\"uid\":\"" + uid + "\",\"password\":\"" + password + "\"}"))
+        .andExpect(status().isOk())
+        .andExpect(content().string("true"));
+
+  }
+
 //  @DisplayName("1件以上タスク取得ができた場合にレスポンスのステータスが200番台でデータに取得したステータスが含まれている")
 //  @Test
 //  void getTaskList_ok2() throws Exception {
@@ -131,4 +128,4 @@
 //
 //    return taskList;
 //  }
-//}
+}
