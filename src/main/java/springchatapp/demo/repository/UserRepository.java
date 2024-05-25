@@ -14,7 +14,6 @@ public class UserRepository {
   final private UserMapper userMapper;
 
   public Optional<UserResource> getUser(final String userName) {
-
     try {
       Optional<UserResource> optionalUserResource = userMapper.selectByUserName(userName);
       return optionalUserResource;
@@ -24,5 +23,14 @@ public class UserRepository {
     }
   }
 
+  public int addUser(UserResource userResource) {
+    try {
+      int result = userMapper.insertUser(userResource);
+      return result;
+    } catch (Exception ex) {
+      log.error("Database access error target user id: {}", userResource.getUid());
+      throw ex;
+    }
+  }
 
 }

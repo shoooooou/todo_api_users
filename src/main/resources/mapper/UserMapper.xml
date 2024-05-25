@@ -8,8 +8,8 @@
     </select>
 
     <!-- タスクを登録 -->
-    <insert id="insertTask" parameterType="springchatapp.demo.model.resource.AddTaskResource">
-        insert into task (uid,task_name,status_cd)
-        values (#{uid},#{taskName},#{statusCd})
+    <insert id="insertUser" parameterType="springchatapp.demo.model.resource.UserResource">
+        insert into user (uid,password)
+        values (#{uid},#{password})
     </insert>
 </mapper>

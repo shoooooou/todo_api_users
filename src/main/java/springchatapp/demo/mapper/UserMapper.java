@@ -8,6 +8,6 @@ import springchatapp.demo.model.resource.UserResource;
 public interface UserMapper {
   Optional<UserResource> selectByUserName(final String uid);
 
-//  TODO: ユーザー登録の時に実装する
-//  int insertUser( addTaskResource);
+  int insertUser(UserResource userResource);
+
 }

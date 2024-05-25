@@ -9,6 +9,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,18 +18,20 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import springchatapp.demo.mapper.UserMapper;
+import springchatapp.demo.model.resource.UserResource;
 
-@SpringBootTest
+@MybatisTest
 @TestExecutionListeners({
     DependencyInjectionTestExecutionListener.class,
     DirtiesContextTestExecutionListener.class,
@@ -36,6 +39,7 @@ import springchatapp.demo.mapper.UserMapper;
     DbUnitTestExecutionListener.class
 })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(UserRepository.class)
 public class UserRepositoryTest {
 
   @Autowired
@@ -97,5 +101,24 @@ public class UserRepositoryTest {
         captorLoggingEvent.getValue().getFormattedMessage());
     Assertions.assertEquals("ERROR", captorLoggingEvent.getValue().getLevel().toString());
   }
+
+  @Test
+  @DatabaseSetup("/addUserSetup.xml")
+  @ExpectedDatabase(value = "/addUserExpectedSuccess.xml", table = "user")
+  @DisplayName("ユーザが情報を登録できる")
+  void addUser_ok1() {
+    final var uid = "0000000010";
+    final var password = "pass1234";
+    final UserResource userResource = UserResource
+        .builder()
+        .uid(uid)
+        .password(password)
+        .build();
+
+    final var result = target.addUser(userResource);
+
+    Assertions.assertEquals(1, result);
+  }
+
 
 }
