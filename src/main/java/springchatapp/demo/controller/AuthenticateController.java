@@ -18,10 +18,11 @@ public class AuthenticateController {
   /**
    * ログイン認証を行う。
    *
-   * @return タスク追加後のメッセージを含む {@link ResponseEntity}
+   * @return ログイン成功/失敗 {@link ResponseEntity}
    */
   @PostMapping("/todo/authenticate/login")
-  public ResponseEntity<?> loginAuthenticate(@RequestBody UserResource userResource) {
+  public ResponseEntity<?> loginAuthenticate(@RequestBody UserResource userResource)
+      throws Exception {
 
     final UserEntity userEntity = UserEntityFactory.create(userResource);
     final boolean isAuthenticate = taskService.authenticateUser(userEntity);
