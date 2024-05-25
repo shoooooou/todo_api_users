@@ -1,8 +1,5 @@
 package springchatapp.demo.service;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,20 +9,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import springchatapp.demo.model.entity.UserEntityFactory;
 import springchatapp.demo.model.resource.UserResource;
 import springchatapp.demo.repository.UserRepository;
+import springchatapp.demo.security.AESUtil;
 
 @ExtendWith(MockitoExtension.class)
-public class TaskServiceTest {
+public class UserServiceTest {
   @Mock
   private UserRepository userRepository;
   @Mock
-  private PasswordEncoder passwordEncoder;
+  private AESUtil aesUtil;
   @InjectMocks
   private UserService target;
 
@@ -33,29 +32,37 @@ public class TaskServiceTest {
   void setup() {
   }
 
-  @Test
-  @DisplayName("ユーザー情報を取得してログインができる")
-  void getTaskList_ok1() {
-    final var userResource = UserResource.builder()
-        .uid("0000000001")
-        .password("test1234")
-        .build();
+  @ParameterizedTest
+  @CsvSource({
+      "0000000001, test1234, true",
+      "0000000002, test1234, false",
+  })
+  @DisplayName("ユーザー情報を取得してログインの検証ができる")
+  void getTaskList_ok1(String uid, String password, boolean expected) throws Exception {
+    final var userResource = createUser(uid, password);
     final var userEntity = UserEntityFactory.create(userResource);
 
-    when(userRepository.getUser(userResource.getUid())).thenReturn(Optional.of(userResource));
-    when(passwordEncoder.matches(eq(userResource.getPassword()),
-        any())).thenReturn(true);
+    final String encreptedPassword = expected ? password : "different_password";
+    final UserResource fetchedUserResource = createUser(uid, encreptedPassword);
+
+    when(userRepository.getUser(userResource.getUid())).thenReturn(
+        Optional.of(fetchedUserResource));
+    when(aesUtil.decrypt(fetchedUserResource.getPassword())).thenReturn(
+        fetchedUserResource.getPassword());
 
     var result = target.authenticateUser(userEntity);
 
     verify(userRepository).getUser(userResource.getUid());
-    verify(passwordEncoder).matches(eq(userResource.getPassword()), any());
-    Assertions.assertTrue(result);
+    if (expected) {
+      Assertions.assertTrue(result);
+    } else {
+      Assertions.assertFalse(result);
+    }
   }
 
   @Test
   @DisplayName("ユーザー情報がいない場合はログインできない")
-  void getUser_ok2() {
+  void getUser_ok2() throws Exception {
     final var userResource = UserResource.builder()
         .uid("0000000001")
         .password("test1234")
@@ -67,8 +74,13 @@ public class TaskServiceTest {
     var result = target.authenticateUser(userEntity);
 
     verify(userRepository).getUser(userResource.getUid());
-    verify(passwordEncoder, times(0)).matches(any(), any());
-
     Assertions.assertFalse(result);
+  }
+
+  private UserResource createUser(String uid, String password) {
+    return UserResource.builder()
+        .uid(uid)
+        .password(password)
+        .build();
   }
 }
