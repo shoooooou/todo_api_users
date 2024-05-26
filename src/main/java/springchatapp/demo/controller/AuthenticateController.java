@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import springchatapp.demo.exceptions.EncryptionException;
 import springchatapp.demo.model.entity.UserEntity;
 import springchatapp.demo.model.entity.UserEntityFactory;
 import springchatapp.demo.model.resource.UserResource;
@@ -30,25 +31,19 @@ public class AuthenticateController {
     return ResponseEntity.ok().body(isAuthenticate);
   }
 
+  /**
+   * ユーザの情報を登録する。
+   *
+   * @return ユーザ登録成功/失敗
+   */
+  @PostMapping("/todo/authenticate/register")
+  public ResponseEntity<?> registerUser(@RequestBody UserResource userResource)
+      throws EncryptionException {
+    final UserEntity userEntity = UserEntityFactory.create(userResource);
+    final boolean isRegister = taskService.registerUser(userEntity);
 
-//  /**
-//   * ユーザのタスクを登録する。
-//   *
-//   * @param uid ユーザーID
-//   * @return タスク追加後のメッセージを含む {@link ResponseEntity}
-//   */
-//  @PostMapping("/todo/tasklist/{uid}")
-//  public ResponseEntity<?> addTask(@PathVariable String uid,
-//                                   @RequestBody AddTaskRequestResource taskRequestResource) {
-//
-//    final var addTaskEntity = AddTaskEntityFactory.create(uid, taskRequestResource);
-//    try {
-//      taskService.addTask(addTaskEntity);
-//    } catch (Exception e) {
-//      return ResponseEntity.status(500).body("Task added failed.");
-//    }
-//
-//    return ResponseEntity.ok("Task added successfully.");
-//  }
+    return isRegister ? ResponseEntity.ok().body("true") :
+        ResponseEntity.badRequest().body("false");
+  }
 
 }
