@@ -9,6 +9,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import springchatapp.demo.exceptions.EncryptionException;
 
 @Component
 public class AESUtil {
@@ -32,18 +33,26 @@ public class AESUtil {
   }
 
   // 暗号化する
-  public String encrypt(String input) throws Exception {
-    Cipher cipher = Cipher.getInstance(ALGORITHM);
-    cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
-    byte[] cipherText = cipher.doFinal(input.getBytes(StandardCharsets.UTF_8));
-    return Base64.getEncoder().encodeToString(cipherText);
+  public String encrypt(String input) throws EncryptionException {
+    try {
+      Cipher cipher = Cipher.getInstance(ALGORITHM);
+      cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+      byte[] cipherText = cipher.doFinal(input.getBytes(StandardCharsets.UTF_8));
+      return Base64.getEncoder().encodeToString(cipherText);
+    } catch (Exception e) {
+      throw new EncryptionException("Failed to encrypt the input", e);
+    }
   }
 
   // 復号化する
-  public String decrypt(String cipherText) throws Exception {
-    Cipher cipher = Cipher.getInstance(ALGORITHM);
-    cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
-    byte[] plainText = cipher.doFinal(Base64.getDecoder().decode(cipherText));
-    return new String(plainText, StandardCharsets.UTF_8);
+  public String decrypt(String cipherText) throws EncryptionException {
+    try {
+      Cipher cipher = Cipher.getInstance(ALGORITHM);
+      cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
+      byte[] plainText = cipher.doFinal(Base64.getDecoder().decode(cipherText));
+      return new String(plainText, StandardCharsets.UTF_8);
+    } catch (Exception e) {
+      throw new EncryptionException("Failed to decrypt the input", e);
+    }
   }
 }

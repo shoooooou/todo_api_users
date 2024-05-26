@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import springchatapp.demo.exceptions.EncryptionException;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -16,7 +17,7 @@ public class AESUtilTest {
 
   @Test
   @DisplayName("パスワードを暗号化して復号化できる")
-  void AESUtil_ok1() throws Exception {
+  void AESUtil_ok1() throws EncryptionException {
     final String passwordStr = "Hoge1234";
 
     final String passwordEncrypt = target.encrypt(passwordStr);
