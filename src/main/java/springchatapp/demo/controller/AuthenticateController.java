@@ -42,8 +42,8 @@ public class AuthenticateController {
     final UserEntity userEntity = UserEntityFactory.create(userResource);
     final boolean isRegister = taskService.registerUser(userEntity);
 
-    return isRegister ? ResponseEntity.ok().body("true") :
-        ResponseEntity.badRequest().body("false");
+    return isRegister ? ResponseEntity.ok().body(true) :
+        ResponseEntity.badRequest().body(false);
   }
 
 }
