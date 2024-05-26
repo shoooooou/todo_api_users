@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import springchatapp.demo.model.entity.UserEntity;
 import springchatapp.demo.model.entity.UserEntityFactory;
 import springchatapp.demo.model.resource.UserResource;
 import springchatapp.demo.repository.UserRepository;
@@ -75,6 +76,25 @@ public class UserServiceTest {
 
     verify(userRepository).getUser(userResource.getUid());
     Assertions.assertFalse(result);
+  }
+
+  @Test
+  @DisplayName("ユーザ情報を登録できる")
+  void registerUser_ok1() throws Exception {
+    final UserResource userResource = createUser("000000001", "pass1234");
+    final UserResource encryptedUserResource = createUser("000000001", "encrypted_password");
+    final UserEntity userEntity = UserEntityFactory.create(userResource);
+
+    when(aesUtil.encrypt(userEntity.getPassword().getValue())).thenReturn(
+        encryptedUserResource.getPassword());
+    when(userRepository.addUser(encryptedUserResource)).thenReturn(1);
+
+    var result = target.registerUser(userEntity);
+
+    verify(aesUtil).encrypt(userEntity.getPassword().getValue());
+    verify(userRepository).addUser(encryptedUserResource);
+
+    Assertions.assertTrue(result);
   }
 
   private UserResource createUser(String uid, String password) {
