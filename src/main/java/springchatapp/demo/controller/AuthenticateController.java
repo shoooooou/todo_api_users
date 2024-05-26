@@ -1,10 +1,12 @@
 package springchatapp.demo.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import springchatapp.demo.exceptions.DatabaseAccessException;
 import springchatapp.demo.exceptions.EncryptionException;
 import springchatapp.demo.model.entity.UserEntity;
 import springchatapp.demo.model.entity.UserEntityFactory;
@@ -38,12 +40,12 @@ public class AuthenticateController {
    */
   @PostMapping("/todo/authenticate/register")
   public ResponseEntity<?> registerUser(@RequestBody UserResource userResource)
-      throws EncryptionException {
+      throws EncryptionException, DatabaseAccessException {
     final UserEntity userEntity = UserEntityFactory.create(userResource);
     final boolean isRegister = taskService.registerUser(userEntity);
 
     return isRegister ? ResponseEntity.ok().body(true) :
-        ResponseEntity.badRequest().body(false);
+        ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
   }
 
 }

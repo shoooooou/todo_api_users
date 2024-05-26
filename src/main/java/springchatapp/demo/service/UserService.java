@@ -3,6 +3,7 @@ package springchatapp.demo.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import springchatapp.demo.exceptions.DatabaseAccessException;
 import springchatapp.demo.exceptions.EncryptionException;
 import springchatapp.demo.model.entity.UserEntity;
 import springchatapp.demo.model.resource.UserResource;
@@ -31,7 +32,8 @@ public class UserService {
   }
 
 
-  public boolean registerUser(UserEntity userEntity) throws EncryptionException {
+  public boolean registerUser(UserEntity userEntity)
+      throws EncryptionException, DatabaseAccessException {
     final UserResource userResource = UserResource.builder()
         .uid(userEntity.getUid().getValue())
         .password(aesUtil.encrypt(userEntity.getPassword().getValue()))
